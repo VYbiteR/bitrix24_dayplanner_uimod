@@ -81,7 +81,7 @@
           position: "top-right"
         });
       } else {
-        console.log('[Bitrix Planner Inject] Toast fallback:\n', content);
+        console.log('[Bitrix Planner Inject]', content);
       }
     }
   
