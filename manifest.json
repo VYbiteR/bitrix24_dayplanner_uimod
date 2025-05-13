@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Bitrix24 Task Planner",
-    "version": "1.0.0",
+    "name": "Bitrix24 Task Planner mod UI",
+    "version": "1.0.2",
     "description": "Автоматически добавляет задачи в план рабочего дня Bitrix24 по параметру set_to_plan в URL.",
     "icons": {
       "16": "icon-16.png",
@@ -9,8 +9,13 @@
       "48": "icon-48.png",
       "128": "icon-128.png"
     },
+  "background": {
+    "service_worker": "background.js"
+   },
     "permissions": [
-      "scripting"
+      "scripting",
+      "tabs",
+      "storage"
     ],
     "host_permissions": [
       "https://*.bitrix24.ru/*"
@@ -30,10 +35,11 @@
         "matches": ["https://*.bitrix24.ru/*"]
       }
     ],
-    "author": "Alexander Soldatov",
-    "homepage_url": "https://github.com/axlevega/bitrix24_dayplanner",
-    "action": {
-      "default_title": "Bitrix24 Task Planner"
-    }
+  "action": {
+    "default_title": "Bitrix24 Task Planner mod UI",
+    "default_popup": "popup.html"
+  },
+    "author": "Alexander Soldatov, mod by VYbiteR",
+    "homepage_url": "https://github.com/axlevega/bitrix24_dayplanner"
   }
   

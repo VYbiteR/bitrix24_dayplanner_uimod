@@ -16,7 +16,6 @@
   
     const run = async () => {
       const sessid = BX.bitrix_sessid();
-      const currentUserId = parseInt(BX.message('USER_ID'), 10);
       const taskInfoList = [];
   
       for (const id of taskIds) {
@@ -25,15 +24,13 @@
             data: { taskId: id }
           });
           const task = result.data.task;
-          if (parseInt(task.responsibleId, 10) === currentUserId) {
+
             taskInfoList.push({
               id: task.id,
               title: task.title,
               responsible: task.responsibleId
             });
-          } else {
-            console.log(`[Bitrix Planner Inject] Пропущена задача ${task.id} — ответственный другой пользователь`);
-          }
+
         } catch (err) {
           console.warn(`[Bitrix Planner Inject] Не удалось получить задачу ${id}`, err);
         }
