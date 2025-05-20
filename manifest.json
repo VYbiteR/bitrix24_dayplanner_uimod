@@ -23,7 +23,7 @@
     "content_scripts": [
       {
         "matches": [
-          "https://*.bitrix24.ru/company/personal/user/*/tasks*"
+          "https://*.bitrix24.ru/*"
         ],
         "js": ["content.js"],
         "run_at": "document_idle"
@@ -31,7 +31,7 @@
     ],
     "web_accessible_resources": [
       {
-        "resources": ["injected.js"],
+        "resources": ["injected.js","injected_timeman.js"],
         "matches": ["https://*.bitrix24.ru/*"]
       }
     ],
