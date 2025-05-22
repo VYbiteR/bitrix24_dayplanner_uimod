@@ -7,17 +7,17 @@
     });
   })();
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    // Уникальный ID для связи
+    
     const messageId = Date.now() + Math.random().toString(36).slice(2);
     msg._messageId = messageId;
 
-    // Перешлём в window
+   
     window.postMessage(msg, '*');
 
     const timeout = setTimeout(() => {
         window.removeEventListener('message', onMessage);
         sendResponse({ error: 'Timeout: no response from injected_timeman.js' });
-    }, 1000); // можно увеличить до 3000 при необходимости
+    }, 1000); 
 
     function onMessage(e) {
         const { data } = e;
