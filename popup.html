@@ -2,18 +2,22 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; width: 260px; padding: 12px; }
-        label, input, button { display: block; width: 100%; margin-bottom: 10px; }
-        input { box-sizing: border-box; padding: 6px; }
-        button { padding: 8px; cursor: pointer; }
-    </style>
+    <link rel="stylesheet" href="style.css">
     <title>Bitrix24 Task Planner mod UI</title>
 </head>
 <body>
+<button style="display: none;" id="openWorkBtn" data-action="open">Начать рабочий день</button>
+<button style="display: none;" id="pauseWorkBtn" data-action="pause">Перерыв</button>
+<button style="display: none;" id="closeWorkBtn" data-action="close">Завершить рабочий день</button>
+<button style="display: none;" id="reopenWorkBtn" data-action="reopen">Продолжить</button>
+
+
 <label for="taskIds">ID задач (через запятую):</label>
 <input id="taskIds" type="text" placeholder="123,456,789">
 <button id="addBtn">Добавить в план</button>
+
+
+
 
 <label for="reportText">Отчёт:</label>
 <textarea id="reportText" rows="8" style="width: 100%"></textarea>
