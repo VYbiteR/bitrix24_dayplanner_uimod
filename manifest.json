@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Bitrix24 Task Planner mod UI",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Автоматически добавляет задачи в план рабочего дня Bitrix24 по параметру set_to_plan в URL.",
     "icons": {
       "16": "icon-16.png",

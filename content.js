@@ -7,10 +7,27 @@
     });
   })();
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.action === 'triggerUpdate') {
-        window.postMessage({
-            action:   'triggerUpdate',
-            recordId: msg.recordId
-        }, '*');
+    // Уникальный ID для связи
+    const messageId = Date.now() + Math.random().toString(36).slice(2);
+    msg._messageId = messageId;
+
+    // Перешлём в window
+    window.postMessage(msg, '*');
+
+    const timeout = setTimeout(() => {
+        window.removeEventListener('message', onMessage);
+        sendResponse({ error: 'Timeout: no response from injected_timeman.js' });
+    }, 1000); // можно увеличить до 3000 при необходимости
+
+    function onMessage(e) {
+        const { data } = e;
+        if (data?.from === 'injected_timeman' && data._messageId === messageId) {
+            clearTimeout(timeout);
+            window.removeEventListener('message', onMessage);
+            sendResponse(data.payload);
+        }
     }
+
+    window.addEventListener('message', onMessage);
+    return true;
 });

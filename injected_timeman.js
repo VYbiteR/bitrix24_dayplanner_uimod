@@ -1,77 +1,71 @@
 ;(function(){
-    const SITE_ID = 's1';
-    const BASE    = '/bitrix/tools/timeman.php';
-    let recordId  = 0;
+    const SITE_ID   = 's1';
+    const BASE      = '/bitrix/tools/timeman.php';
+    let RECORD_ID = 1076;
 
-    // 4.1. Обновление учёта времени
-    function fetchUpdate(){
+    function fetchUpdateAndReturnReport(messageId) {
         const sessid = BX.bitrix_sessid();
         BX.ajax({
-            url:    `${BASE}?action=update&site_id=${SITE_ID}&sessid=${sessid}`,
+            url: `${BASE}?action=update&site_id=${SITE_ID}&sessid=${sessid}`,
             method: 'POST',
             dataType: 'text',
             data: {
-                recordId: recordId,
-                device:   'browser'
+                recordId: RECORD_ID,
+                device: 'browser'
             },
-            onsuccess(text){
+            onsuccess(text) {
                 let data;
                 try { data = JSON.parse(text); }
-                catch { data = eval('('+text+')'); }
-                console.log('timeman:update data', data);
-                recordId = Number(data.entry_id) || recordId;
-                sendReport(data, sessid);
+                catch { data = eval('(' + text + ')'); }
+                //console.log('timeman:update → REPORT:', data.REPORT);
+                RECORD_ID=data.ID;
+                window.postMessage({
+                    from: 'injected_timeman',
+                    _messageId: messageId,
+                    payload: { report: data.REPORT, recordId: data.ID }
+                }, '*');
             },
-            onfailure(err){
-                console.error('timeman:update error', err, err.xhr && err.xhr.responseText);
-                scheduleNext();
+            onfailure(err) {
+                // console.error('timeman:update error', err);
             }
         });
     }
 
-    // 4.2. Отправка отчёта
-    function sendReport(data, sessid){
+    function sendReportManually(report) {
+        const sessid = BX.bitrix_sessid();
+        const safeReport = String(report);
+
+       // console.log('Value:', safeReport, '| Type:', typeof safeReport);
         BX.ajax({
-            url:    `${BASE}?action=report&site_id=${SITE_ID}&sessid=${sessid}`,
+            url: `${BASE}?action=report&site_id=${SITE_ID}&sessid=${sessid}`,
             method: 'POST',
             dataType: 'text',
             data: {
-                entry_id:  data.entry_id,
-                report_ts: data.report_ts,
-                report:    data.report,
+                entry_id:  RECORD_ID,
+                report:    safeReport,
+                report_ts: Math.floor(Date.now() / 1000)+25180,
                 device:    'browser'
             },
-            onsuccess(){
-                console.log('timeman:report success');
-                scheduleNext();
+            onsuccess(res) {
+                // console.log('timeman:report отправлен ', report);
+                // console.log('Ответ сервера:', res);
             },
-            onfailure(err){
-                console.error('timeman:report error', err, err.xhr && err.xhr.responseText);
-                scheduleNext();
+            onfailure(err) {
+               // console.error('timeman:report ошибка', err);
             }
         });
     }
 
-    function scheduleNext(){
-        setTimeout(fetchUpdate, 60_000);
-    }
-
-    // 4.3. Инициализация
-    function init(){
-        if (!window.BX || !BX.bitrix_sessid) {
-            return setTimeout(init, 100);
-        }
-        fetchUpdate();
-    }
-    init();
-
-    // 4.4. Триггер на внешнее сообщение
     window.addEventListener('message', e => {
-        if (e.data && e.data.action === 'triggerUpdate') {
-            if (e.data.recordId !== undefined) {
-                recordId = Number(e.data.recordId) || recordId;
-            }
-            fetchUpdate();
+        if (!window.BX || !BX.bitrix_sessid) return;
+        if (!e.data?.action) return;
+
+        if (e.data.action === 'getReport') {
+            fetchUpdateAndReturnReport(e.data._messageId);
+        }
+
+        if (e.data.action === 'sendReport') {
+            sendReportManually(e.data.report);
         }
     });
 })();

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 	// Элементы
-	const recordInput = document.getElementById('recordIdInput');
+	const recordInput = document.getElementById('reportInput');
 	const taskInput   = document.getElementById('taskIds');
 	const addBtn      = document.getElementById('addBtn');
 
@@ -33,20 +33,44 @@ document.addEventListener('DOMContentLoaded', () => {
 		window.close();
 	});
 
-	// 2) Функция-триггер для timeman:update
-	function sendTrigger() {
-		const recordId = recordInput.value.trim();
-		console.log('>>> Отправляем recordId из input:', recordId);
+
+	const textarea = document.getElementById('reportText');
+
+	// При открытии: запрашиваем REPORT по recordId=1076
+	chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+		if (!tabs[0]) return;
+		chrome.tabs.sendMessage(tabs[0].id, {
+			action:   'getReport'
+		}, response => {
+			textarea.value = response?.report || '';
+			const now = new Date();
+			const hh = String(now.getHours()).padStart(2, '0');
+			const mm = String(now.getMinutes()).padStart(2, '0');
+			const timestamp = `${hh}:${mm}: `;
+
+			const start = textarea.selectionStart;
+			const end = textarea.selectionEnd;
+
+			const before = textarea.value.substring(0, start);
+			const after = textarea.value.substring(end);
+
+			textarea.value = before + "\n" + timestamp + after;
+
+		});
+	});
+
+	// При закрытии попапа — отправляем REPORT
+	function sendUpdatedReport() {
+		const report = textarea.value.trim();
 		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
 			if (!tabs[0]) return;
 			chrome.tabs.sendMessage(tabs[0].id, {
-				action:   'triggerUpdate',
-				recordId: recordId
+				action: 'sendReport',
+				report: report
 			});
 		});
 	}
 
-	// 3) Повесить sendTrigger на blur и при закрытии попапа
-	recordInput.addEventListener('blur', sendTrigger);
-	window.addEventListener('unload', sendTrigger);
+	textarea.addEventListener('blur', sendUpdatedReport);
+	window.addEventListener('unload', sendUpdatedReport);
 });
