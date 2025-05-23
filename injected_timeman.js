@@ -117,7 +117,8 @@
                         _messageId: e.data._messageId,
                         payload: {
                             STATE: data.STATE,
-                            INFO: data.INFO
+                            INFO: data.INFO,
+                            TASKS: data.PLANNER.TASKS
                         }
                     }, '*');
                 },
@@ -125,6 +126,16 @@
                     console.error('timeman:getState error', err);
                 }
             });
+        }
+
+        if (e.data.action === 'getDomain') {
+            window.postMessage({
+                from: 'injected_timeman',
+                _messageId: e.data._messageId,
+                payload: {
+                    domain: window.location.origin
+                }
+            }, '*');
         }
 
     });

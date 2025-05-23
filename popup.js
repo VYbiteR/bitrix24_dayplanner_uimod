@@ -120,11 +120,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.log('[popup] getState response:', response);
 			const state = response?.STATE;
 			const info  = response?.INFO;
+			const tasks = response?.TASKS || [];
 			updateButtons(state, info);
+			renderTasks(tasks);
 		});
 	});
 
-	// При закрытии попапа — отправляем REPORT
+
 	function sendUpdatedReport() {
 		const report = textarea.value.trim();
 		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
@@ -135,6 +137,70 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 		});
 	}
+
+	function formatSeconds(seconds) {
+		if (!seconds || isNaN(seconds)) return '';
+		const h = Math.floor(seconds / 3600);
+		const m = Math.floor((seconds % 3600) / 60);
+		return `${h}ч ${m}м`;
+	}
+
+
+	function getCurrentDomain(callback) {
+		chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+			if (!tabs[0]) return;
+			try {
+				const url = new URL(tabs[0].url);
+				callback(`${url.origin}`);
+			} catch {
+				callback('');
+			}
+		});
+	}
+
+	function renderTasks(tasks) {
+		const container = document.getElementById('taskList');
+		container.innerHTML = '';
+
+		getCurrentDomain(domain => {
+			tasks.forEach(task => {
+				const el = document.createElement('div');
+				el.className = 'task-item';
+
+				const left = document.createElement('div');
+				left.className = 'task-left';
+
+				const title = document.createElement('a');
+				title.href = `${domain}/company/personal/user/${task.RESPONSIBLE_ID}/tasks/task/view/${task.ID}/`;
+				title.textContent = task.TITLE;
+				title.className = 'task-title';
+				title.target = '_blank';
+
+
+				const time = document.createElement('div');
+				time.className = 'task-time';
+				const spent = formatSeconds(parseInt(task.TIME_SPENT_IN_LOGS || '0'));
+				time.textContent = spent || '';
+
+				left.appendChild(title);
+				if (spent) left.appendChild(time);
+
+				el.appendChild(left);
+
+				if (task.PRIORITY === '2') {
+					const icon = document.createElement('img');
+					icon.src = 'fire.svg';
+					icon.alt = '🔥';
+					icon.className = 'task-priority';
+					el.appendChild(icon);
+				}
+
+				container.appendChild(el);
+			});
+		});
+	}
+
+
 
 	textarea.addEventListener('blur', sendUpdatedReport);
 	window.addEventListener('unload', sendUpdatedReport);

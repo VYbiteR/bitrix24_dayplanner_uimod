@@ -7,11 +7,12 @@
     });
   })();
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    
+
+
     const messageId = Date.now() + Math.random().toString(36).slice(2);
     msg._messageId = messageId;
 
-   
+
     window.postMessage(msg, '*');
 
     const timeout = setTimeout(() => {
