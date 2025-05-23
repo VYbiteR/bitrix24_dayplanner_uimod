@@ -6,6 +6,13 @@
     <title>Bitrix24 Task Planner mod UI</title>
 </head>
 <body>
+
+<div class="tabs">
+    <div class="tab active" data-tab="main">Основное</div>
+    <div class="tab" data-tab="tasks">Задачи на день</div>
+</div>
+
+<div id="main" class="tab-content active">
 <button style="display: none;" id="openWorkBtn" data-action="open">Начать рабочий день</button>
 <button style="display: none;" id="pauseWorkBtn" data-action="pause">Перерыв</button>
 <button style="display: none;" id="closeWorkBtn" data-action="close">Завершить рабочий день</button>
@@ -21,7 +28,17 @@
 
 <label for="reportText">Отчёт:</label>
 <textarea id="reportText" rows="8" style="width: 100%"></textarea>
+</div>
 
+
+
+<div id="tasks" class="tab-content">
+    <div class="task-list" id="taskList"></div>
+</div>
+
+
+
+<script src="tabs.js"></script>
 <script src="popup.js"></script>
 </body>
 </html>
