@@ -85,8 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
 		} else if (state === 'CLOSED') {
 			if (!hadShiftToday) {
 				openWorkBtn.style.display = 'block';
-			}
+			}else{
 			    reopenWorkBtn.style.display = 'block';
+			}
 		} else if (state === 'EXPIRED') {
 			openWorkBtn.style.display = 'block';
 		}
