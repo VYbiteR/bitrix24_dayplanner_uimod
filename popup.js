@@ -177,7 +177,9 @@ document.addEventListener('DOMContentLoaded', () => {
 				title.className = 'task-title';
 				title.target = '_blank';
 
-
+				if (task.STATUS === '5') {
+					title.style.textDecoration = 'line-through';
+				}
 				const time = document.createElement('div');
 				time.className = 'task-time';
 				const spent = formatSeconds(parseInt(task.TIME_SPENT_IN_LOGS || '0'));
