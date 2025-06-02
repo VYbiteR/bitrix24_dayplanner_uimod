@@ -65,19 +65,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	function computeDuration(info) {
 
-		if (parseInt(info.DURATION || '0', 10)){
-			const formatted = formatSeconds(info.DURATION);
-			if (formatted) {
-				return formatted;
-			}
-		}
-
 		if (!info.DATE_START) {
 			return '';
 		}
 
 		const nowSec = Math.floor(Date.now() / 1000);
-		const elapsed = nowSec - info.DATE_START;
+		const elapsed = nowSec - info.DATE_START - info.TIME_LEAKS;
 		return formatSeconds(elapsed);
 	}
 
