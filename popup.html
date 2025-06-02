@@ -13,21 +13,41 @@
 </div>
 
 <div id="main" class="tab-content active">
-<button style="display: none;" id="openWorkBtn" data-action="open">Начать рабочий день</button>
-<button style="display: none;" id="pauseWorkBtn" data-action="pause">Перерыв</button>
-<button style="display: none;" id="closeWorkBtn" data-action="close">Завершить рабочий день</button>
-<button style="display: none;" id="reopenWorkBtn" data-action="reopen">Продолжить</button>
+    <div id="timemanCard" style="
+	border: 1px solid #dcdcdc;
+	border-radius: 10px;
+	background: #f9f9f9;
+	padding: 12px 14px;
+	margin-bottom: 16px;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+	font-family: sans-serif;
+	font-size: 13.5px;
+	line-height: 1.6;
+">
+        <div id="timemanStatusRow" style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <span id="statusIcon">🟢</span>
+            <span id="statusText">В работе</span>
+        </div>
+        <div><strong>Начало работы:</strong> <span id="startedAt">--:--</span></div>
+        <div><strong>В работе:</strong> <span id="durationWork">0ч 0м</span></div>
+        <div><strong>Перерыв:</strong> <span id="durationPause">0ч 0м</span></div>
+    </div>
+
+    <button style="display: none;" id="openWorkBtn" data-action="open">Начать рабочий день</button>
+    <button style="display: none;" id="pauseWorkBtn" data-action="pause">Перерыв</button>
+    <button style="display: none;" id="closeWorkBtn" data-action="close">Завершить рабочий день</button>
+    <button style="display: none;" id="reopenWorkBtn" data-action="reopen">Продолжить</button>
 
 
-<label for="taskIds">ID задач (через запятую):</label>
-<input id="taskIds" type="text" placeholder="123,456,789">
-<button id="addBtn">Добавить в план</button>
+    <label for="taskIds">ID задач (через запятую):</label>
+    <input id="taskIds" type="text" placeholder="123,456,789">
+    <button id="addBtn">Добавить в план</button>
 
 
 
 
-<label for="reportText">Отчёт:</label>
-<textarea id="reportText" rows="8" style="width: 100%"></textarea>
+    <label for="reportText">Отчёт:</label>
+    <textarea id="reportText" rows="8" style="width: 100%"></textarea>
 </div>
 
 

@@ -63,6 +63,25 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 	const textarea = document.getElementById('reportText');
 
+	function computeDuration(info) {
+
+		if (parseInt(info.DURATION || '0', 10)){
+			const formatted = formatSeconds(info.DURATION);
+			if (formatted) {
+				return formatted;
+			}
+		}
+
+		if (!info.DATE_START) {
+			return '';
+		}
+
+		const nowSec = Math.floor(Date.now() / 1000);
+		const elapsed = nowSec - info.DATE_START;
+		return formatSeconds(elapsed);
+	}
+
+
 	function updateButtons(state, info) {
 		// console.log('[popup] Updating buttons for state:', state);
 		// console.log('[popup] Info:', info);
@@ -75,18 +94,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// Скрыть всё по умолчанию
 		[openWorkBtn, pauseWorkBtn, reopenWorkBtn, closeWorkBtn].forEach(btn => btn.style.display = 'none');
+		const statusIcon = document.getElementById('statusIcon');
+		const statusText = document.getElementById('statusText');
+		const startedAtEl = document.getElementById('startedAt');
+		const durationWorkEl = document.getElementById('durationWork');
+		const durationPauseEl = document.getElementById('durationPause');
+
+		if (!info || !state) {
+			document.getElementById('timemanCard').style.display = 'none';
+			return;
+		}
+
+		document.getElementById('timemanCard').style.display = 'block';
+
+		const startedAt = new Date(info.DATE_START * 1000);
+		const startedStr = startedAt.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+		//const duration = formatSeconds(info.DURATION);
+		const pause = formatSeconds(info.TIME_LEAKS);
+
+
+
+		startedAtEl.textContent = startedStr;
+
+
+		durationWorkEl.textContent = computeDuration(info);
+		durationPauseEl.textContent = pause;
 
 		if (state === 'OPENED') {
 			pauseWorkBtn.style.display = 'block';
 			closeWorkBtn.style.display = 'block';
+			statusIcon.textContent = '🟢';
+			statusText.textContent = 'В работе';
 		} else if (state === 'PAUSED') {
 			reopenWorkBtn.style.display = 'block';
 			closeWorkBtn.style.display = 'block';
+			statusIcon.textContent = '⏸️';
+			statusText.textContent = 'Пауза';
 		} else if (state === 'CLOSED') {
 			if (!hadShiftToday) {
 				openWorkBtn.style.display = 'block';
+				statusIcon.textContent = '🔴';
+				statusText.textContent = 'Не начат';
 			}else{
 			    reopenWorkBtn.style.display = 'block';
+				statusIcon.textContent = '🔴';
+				statusText.textContent = 'Рабочий день завершён';
 			}
 		} else if (state === 'EXPIRED') {
 			openWorkBtn.style.display = 'block';
